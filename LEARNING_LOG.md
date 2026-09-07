@@ -47,3 +47,16 @@
 - Parameterized queries (`$1, $2`) SQL Injection se bachati hain
 - `RETURNING *` se insert ke baad naya row wapas milta hai
 - CHECK constraint violation `try/catch` se pakad ke clean error bhej sakte hain
+
+## Day 5 — 07-09-2026
+
+**Kya kiya:**
+- `GET /messages/:conversation_id` route banaya (`req.params`)
+- Signup route banaya (`bcrypt.hash` se password secure kiya)
+- Login route banaya (`bcrypt.compare` se verify, JWT token generate kiya)
+
+**Kya seekha:**
+- `req.params` se URL ke andar dynamic value bhejte hain
+- Password hashing one-way hoti hai — login pe naya password hash karke compare karte hain, decrypt nahi karte
+- Login mein `GET` nahi `POST` use karte hain kyunki sensitive data body mein bhejna hota hai, URL mein nahi
+- JWT token ek signed, expiring proof hai jo login ke baad user ki identity carry karta hai bina baar-baar database check kiye
