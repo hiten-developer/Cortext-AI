@@ -60,3 +60,16 @@
 - Password hashing one-way hoti hai — login pe naya password hash karke compare karte hain, decrypt nahi karte
 - Login mein `GET` nahi `POST` use karte hain kyunki sensitive data body mein bhejna hota hai, URL mein nahi
 - JWT token ek signed, expiring proof hai jo login ke baad user ki identity carry karta hai bina baar-baar database check kiye
+
+
+## Day 6 — 08-09-2026
+
+**Kya kiya:**
+- `authMiddleware` banaya jo JWT token verify karta hai
+- `GET /users` route ko protected banaya (`authMiddleware` laga ke)
+- Dono cases test kiye — bina token (reject) aur valid token (access)
+
+**Kya seekha:**
+- Middleware ek function hai jo request aur route handler ke beech chalta hai, `next()` call karke aage badhata hai
+- Middleware se code duplication bachta hai — verification logic ek jagah likh ke kai routes pe reuse kar sakte hain
+- `req.headers.authorization` se token milta hai, format hota hai `"Bearer <token>"`

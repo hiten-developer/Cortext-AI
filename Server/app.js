@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 app.use(express.json());
 
 // Users Details Route
-app.get("/users", async (req, res) => {
+app.get("/users",authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
       "Select id,name,email,phone_no,dob from users",
@@ -156,6 +156,34 @@ app.post("/login", async (req, res) => {
   }  
 })
 
+
+// authMiddleware Code
+function authMiddleware(req,res,next){
+   const authHeader = req.headers.authorization;
+
+   if(!authHeader){
+    return res.status(401).json({
+      success : false,
+      message : "No token provided"
+    })
+   }
+
+   const token = authHeader.split(' ')[1];
+
+   try{
+    const result = jwt.verify(token,process.env.JWT_SECRET)
+
+    if(result){
+      next()
+    }
+    
+   } catch(err){
+    res.status(401).json({
+      success : false,
+      message : err.message
+    })
+   }
+}
 
 
 module.exports = app;
