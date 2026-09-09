@@ -73,3 +73,14 @@
 - Middleware ek function hai jo request aur route handler ke beech chalta hai, `next()` call karke aage badhata hai
 - Middleware se code duplication bachta hai — verification logic ek jagah likh ke kai routes pe reuse kar sakte hain
 - `req.headers.authorization` se token milta hai, format hota hai `"Bearer <token>"`
+
+## Day 7 — 09-09-2026
+
+**Kya kiya:**
+- `authMiddleware` update kiya taaki `req.user` set kare (`req.user = result`)
+- `POST /conversations` ko protect kiya — `user_id` ab token se aata hai, `req.body` se nahi
+- `POST /messages` ko bhi `authMiddleware` se protect kiya
+
+**Kya seekha:**
+- `req` object middleware se route handler tak "safar" karta hai — middleware usme naya data (`req.user`) add kar sakta hai jo aage use hota hai
+- Client ko trust nahi karte sensitive data (jaise user_id) ke liye — token se hi lena chahiye, jo verified hai

@@ -26,11 +26,11 @@ app.get("/users",authMiddleware, async (req, res) => {
 });
 
 // Conversation Creation Route
-app.post("/conversations", async (req, res) => {
+app.post("/conversations", authMiddleware,async (req, res) => {
   try {
     const result = await pool.query(
       "Insert Into conversations(user_id,title) Values($1,$2) RETURNING *",
-      [req.body.user_id, req.body.title],
+      [req.user.userId, req.body.title],
     );
     res.json({
       success: true,
@@ -46,7 +46,7 @@ app.post("/conversations", async (req, res) => {
 });
 
 // Messages Route
-app.post("/messages", async (req, res) => {
+app.post("/messages", authMiddleware,async (req, res) => {
   try {
     const result = await pool.query(
       "insert into messages (conversation_id,content,role) values($1,$2,$3) RETURNING *",
@@ -172,8 +172,8 @@ function authMiddleware(req,res,next){
 
    try{
     const result = jwt.verify(token,process.env.JWT_SECRET)
-
     if(result){
+      req.user = result;
       next()
     }
     
