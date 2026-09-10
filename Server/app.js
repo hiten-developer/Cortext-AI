@@ -7,6 +7,14 @@ const jwt = require('jsonwebtoken');
 // MiddleWares
 app.use(express.json());
 
+app.get('/conversations',async(req,res)=>{
+  const result = await pool.query("select * from conversations")
+  res.json({
+    success : true,
+    data : result.rows
+  })
+})
+
 // Users Details Route
 app.get("/users",authMiddleware, async (req, res) => {
   try {
@@ -67,8 +75,26 @@ app.post("/messages", authMiddleware,async (req, res) => {
 });
 
 // Get Messages Through Conversation Id
-app.get("/messages/:conversation_id", async (req, res) => {
+app.get("/messages/:conversation_id",authMiddleware, async (req, res) => {
   try {
+    const res_user_id = await pool.query("select user_id from conversations where id = $1",[req.params.conversation_id])
+     if(res_user_id.rows.length == 0){
+      return res.status(400).json({
+        success : false,
+        message : "not found user"
+      })
+    }
+    const user_id = res_user_id.rows[0].user_id
+   
+    
+    if(user_id != req.user.userId){
+      return res.status(403).json({
+        success : false,
+        message : "Access Denied!"
+      })
+    }
+
+
     const result = await pool.query(
       "select * from messages where conversation_id = $1 ",
       [req.params.conversation_id],

@@ -84,3 +84,14 @@
 **Kya seekha:**
 - `req` object middleware se route handler tak "safar" karta hai — middleware usme naya data (`req.user`) add kar sakta hai jo aage use hota hai
 - Client ko trust nahi karte sensitive data (jaise user_id) ke liye — token se hi lena chahiye, jo verified hai
+
+## Day 8 — 10-09-2026
+
+**Kya kiya:**
+- `GET /messages/:conversation_id` route mein ownership check add kiya
+- Verify kiya ki conversation ka `user_id`, logged-in user (`req.user.userId`) se match karta hai ya nahi
+- Insert + fetch dono test kiye apni conversation pe
+
+**Kya seekha:**
+- Sirf login hona kaafi nahi hota — data "apna hai ya nahi" bhi check karna padta hai (ownership check)
+- Login user aur data-owner alag concepts hain, dono ka match hona zaroori hai sensitive data access karne ke liye
