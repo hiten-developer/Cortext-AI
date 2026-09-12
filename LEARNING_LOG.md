@@ -95,3 +95,15 @@
 **Kya seekha:**
 - Sirf login hona kaafi nahi hota — data "apna hai ya nahi" bhi check karna padta hai (ownership check)
 - Login user aur data-owner alag concepts hain, dono ka match hona zaroori hai sensitive data access karne ke liye
+
+
+## Day 9 — 12-09-2026
+
+**Kya kiya:**
+- `POST /messages` mein ownership check add kiya, cross-user test kiya
+- `GET /conversations` route banaya jo sirf logged-in user ki apni conversations deta hai
+- Duplicate route definition ka bug dhoondha aur fix kiya
+
+**Kya seekha:**
+- Express mein duplicate route define karne pe sirf pehla wala chalta hai, doosra silently ignore hota hai
+- `console.log` print na hone ka matlab ho sakta hai wo code block chal hi nahi raha

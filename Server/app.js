@@ -2,21 +2,14 @@ const express = require("express");
 const pool = require("./db");
 const app = express();
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 // MiddleWares
 app.use(express.json());
 
-app.get('/conversations',async(req,res)=>{
-  const result = await pool.query("select * from conversations")
-  res.json({
-    success : true,
-    data : result.rows
-  })
-})
 
 // Users Details Route
-app.get("/users",authMiddleware, async (req, res) => {
+app.get("/users", authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
       "Select id,name,email,phone_no,dob from users",
@@ -34,7 +27,7 @@ app.get("/users",authMiddleware, async (req, res) => {
 });
 
 // Conversation Creation Route
-app.post("/conversations", authMiddleware,async (req, res) => {
+app.post("/conversations", authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
       "Insert Into conversations(user_id,title) Values($1,$2) RETURNING *",
@@ -53,9 +46,43 @@ app.post("/conversations", authMiddleware,async (req, res) => {
   }
 });
 
+// Conversation Data Get Route
+app.get("/conversations",authMiddleware, async(req,res) => {
+  try{
+    const result = await pool.query("select * from conversations where user_id = $1",[req.user.userId]);
+    
+    res.json({
+      success : true,
+      data : result.rows
+    })
+  } catch(err){
+    res.json({
+      success : false,
+      error : err.message
+    })
+  }
+})
+
 // Messages Route
-app.post("/messages", authMiddleware,async (req, res) => {
+app.post("/messages", authMiddleware, async (req, res) => {
   try {
+    const conv_id = await pool.query("select user_id from conversations where id=$1 ",[req.body.conversation_id]);
+
+    if(conv_id.rows.length == 0){
+         return res.status(400).json({
+        success: false,
+        message: "not found user",
+      });
+    }
+
+    const user_id = conv_id.rows[0].user_id;
+
+    if(user_id != req.user.userId){
+        return res.status(403).json({
+        success: false,
+        message: "Access Denied!",
+      });
+    }
     const result = await pool.query(
       "insert into messages (conversation_id,content,role) values($1,$2,$3) RETURNING *",
       [req.body.conversation_id, req.body.content, req.body.role],
@@ -75,25 +102,26 @@ app.post("/messages", authMiddleware,async (req, res) => {
 });
 
 // Get Messages Through Conversation Id
-app.get("/messages/:conversation_id",authMiddleware, async (req, res) => {
+app.get("/messages/:conversation_id", authMiddleware, async (req, res) => {
   try {
-    const res_user_id = await pool.query("select user_id from conversations where id = $1",[req.params.conversation_id])
-     if(res_user_id.rows.length == 0){
+    const res_user_id = await pool.query(
+      "select user_id from conversations where id = $1",
+      [req.params.conversation_id],
+    );
+    if (res_user_id.rows.length == 0) {
       return res.status(400).json({
-        success : false,
-        message : "not found user"
-      })
+        success: false,
+        message: "not found user",
+      });
     }
-    const user_id = res_user_id.rows[0].user_id
-   
-    
-    if(user_id != req.user.userId){
-      return res.status(403).json({
-        success : false,
-        message : "Access Denied!"
-      })
-    }
+    const user_id = res_user_id.rows[0].user_id;
 
+    if (user_id != req.user.userId) {
+      return res.status(403).json({
+        success: false,
+        message: "Access Denied!",
+      });
+    }
 
     const result = await pool.query(
       "select * from messages where conversation_id = $1 ",
@@ -140,76 +168,73 @@ app.post("/signup", async (req, res) => {
 
 // Login Route
 app.post("/login", async (req, res) => {
-    try{
+  try {
     const email = req.body.email;
     const plainPass = req.body.password;
 
-    const result = await pool.query("select * from users where email = $1",[email]);
+    const result = await pool.query("select * from users where email = $1", [
+      email,
+    ]);
 
-    if(result.rows.length == 0){
-        return res.json({
-            success : false,
-            message : "User not Exists try again..."
-        })
+    if (result.rows.length == 0) {
+      return res.json({
+        success: false,
+        message: "User not Exists try again...",
+      });
     }
-    const hashedPass = result.rows[0].password
-    
-    const isMatch = await bcrypt.compare(plainPass,hashedPass);
-    if(isMatch){
+    const hashedPass = result.rows[0].password;
+
+    const isMatch = await bcrypt.compare(plainPass, hashedPass);
+    if (isMatch) {
       const token = jwt.sign(
-      {userId : result.rows[0].id},
-      process.env.JWT_SECRET,
-      {expiresIn : '1d'}
-    )
-        return res.json({
-            success : true,
-            message : "you Are logged in",
-            jwt_token : token
-        })
+        { userId: result.rows[0].id },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" },
+      );
+      return res.json({
+        success: true,
+        message: "you Are logged in",
+        jwt_token: token,
+      });
+    } else {
+      res.json({
+        success: false,
+        message: "pass incorrect",
+      });
     }
-    else{
-        res.json({
-            success : false,
-            message  : "pass incorrect"
-        })
-    }
-    }
-    catch (err) {
+  } catch (err) {
     res.status(500).json({
       success: false,
       message: err.message,
     });
-  }  
-})
-
+  }
+});
 
 // authMiddleware Code
-function authMiddleware(req,res,next){
-   const authHeader = req.headers.authorization;
+function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
 
-   if(!authHeader){
+  if (!authHeader) {
     return res.status(401).json({
-      success : false,
-      message : "No token provided"
-    })
-   }
+      success: false,
+      message: "No token provided",
+    });
+  }
 
-   const token = authHeader.split(' ')[1];
+  const token = authHeader.split(" ")[1];
 
-   try{
-    const result = jwt.verify(token,process.env.JWT_SECRET)
-    if(result){
+  try {
+    const result = jwt.verify(token, process.env.JWT_SECRET);
+    if (result) {
       req.user = result;
-      next()
+      next();
     }
-    
-   } catch(err){
+  } catch (err) {
     res.status(401).json({
-      success : false,
-      message : err.message
-    })
-   }
+      success: false,
+      message: err.message,
+    });
+  }
 }
-
 
 module.exports = app;
