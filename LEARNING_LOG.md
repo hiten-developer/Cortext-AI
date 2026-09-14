@@ -111,11 +111,13 @@
 ## Day 10 — 14-09-2026
 
 **Kya kiya:**
-- `express.Router()` use karke saare routes ko alag files mein split kiya (authRoutes, userRoutes, conversationRoutes, messageRoutes)
-- `authMiddleware` ko bhi alag file mein nikala
-- Saare 7 routes test kiye refactoring ke baad — sab pass
+- Saare routes ko `express.Router()` se alag files mein split kiya (refactoring)
+- Groq API integrate kiya (free AI provider) — `POST /chat` route banaya
+- Ownership check, message save, AI call, response save — poora flow implement kiya
+- Context-awareness bug fix kiya — conversation history Groq ko bhejna (`.map()` se format convert karke)
 
 **Kya seekha:**
-- `Router` ek mini-Express-app jaisa hai jo apne routes define karke `app.use()` se main app se jud jata hai
-- Har file apna alag scope rakhti hai — imports (`pool`, `bcrypt`, `jwt`) har file mein alag se lene padte hain
-- Relative paths (`../db`) folder structure ke hisaab se likhne padte hain
+- `express.Router()` se routes modular files mein organize hote hain
+- LLM APIs stateless hoti hain — poori conversation history hume khud har request mein bhejni padti hai context ke liye
+- `.map()` se array ke har element ko transform karke naya array banate hain
+- Text-generation models image generate nahi kar sakte — alag scope ka kaam hota hai
