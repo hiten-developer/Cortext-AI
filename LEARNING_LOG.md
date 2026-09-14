@@ -107,3 +107,15 @@
 **Kya seekha:**
 - Express mein duplicate route define karne pe sirf pehla wala chalta hai, doosra silently ignore hota hai
 - `console.log` print na hone ka matlab ho sakta hai wo code block chal hi nahi raha
+
+## Day 10 — 14-09-2026
+
+**Kya kiya:**
+- `express.Router()` use karke saare routes ko alag files mein split kiya (authRoutes, userRoutes, conversationRoutes, messageRoutes)
+- `authMiddleware` ko bhi alag file mein nikala
+- Saare 7 routes test kiye refactoring ke baad — sab pass
+
+**Kya seekha:**
+- `Router` ek mini-Express-app jaisa hai jo apne routes define karke `app.use()` se main app se jud jata hai
+- Har file apna alag scope rakhti hai — imports (`pool`, `bcrypt`, `jwt`) har file mein alag se lene padte hain
+- Relative paths (`../db`) folder structure ke hisaab se likhne padte hain
