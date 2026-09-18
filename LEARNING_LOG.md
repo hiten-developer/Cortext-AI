@@ -121,3 +121,19 @@
 - LLM APIs stateless hoti hain — poori conversation history hume khud har request mein bhejni padti hai context ke liye
 - `.map()` se array ke har element ko transform karke naya array banate hain
 - Text-generation models image generate nahi kar sakte — alag scope ka kaam hota hai
+
+## Day 11 — 18-09-2026
+
+**Kya kiya:**
+- Vite se React project setup kiya (`client` folder)
+- `useState` hook se Login form banaya (email, password)
+- `fetch()` se backend `/login` API ko connect kiya
+- CORS error fix kiya (`cors` package, `app.use(cors())`)
+- Typo bug khud debug kiya Network tab se (`Content-Typ` vs `Content-Type`)
+
+**Kya seekha:**
+- JSX se JavaScript ke andar HTML-jaisa UI likhte hain
+- `useState` se React ko pata chalta hai value badli, UI automatically update hota hai
+- CORS ek browser security policy hai — backend ko explicitly frontend ko allow karna padta hai
+- `express.json()` sirf tabhi `req.body` parse karta hai jab `Content-Type: application/json` header sahi ho
+- Chrome DevTools ka Network tab (Payload, Headers) real debugging ke liye bahut useful hai
