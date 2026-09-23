@@ -1,11 +1,16 @@
+import {BrowserRouter,Routes,Route} from 'react-router-dom'
 import Login  from "./pages/Login"
+
 
 function App() {
 
   return (
-    <div>
-      <Login/>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/login' element={<Login />} />
+        <Route path="/chat" element={<div>Chat Page (Coming Soon)</div>} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

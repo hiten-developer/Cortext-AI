@@ -1,6 +1,8 @@
 import { useState } from "react";
+import {useNavigate} from 'react-router-dom'
 
 function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -14,7 +16,13 @@ function Login() {
     });
 
     const data = await response.json();
-    console.log(data);
+    if(data.success !== true){
+      return alert(data.message);
+    }
+    localStorage.setItem('token',data.jwt_token)
+      navigate('/chat')
+
+    
   };
 
   return (

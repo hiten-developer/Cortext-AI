@@ -137,3 +137,18 @@
 - CORS ek browser security policy hai — backend ko explicitly frontend ko allow karna padta hai
 - `express.json()` sirf tabhi `req.body` parse karta hai jab `Content-Type: application/json` header sahi ho
 - Chrome DevTools ka Network tab (Payload, Headers) real debugging ke liye bahut useful hai
+
+## Day 12 — 23-09-2026
+
+**Kya kiya:**
+- `react-router-dom` install kiya, basic routing setup (`/login`, `/chat`)
+- Login form mein `localStorage` se token save karna add kiya
+- `useNavigate` se login success par `/chat` pe redirect kiya
+- Kai real bugs khud debug kiye (function ke bahar code, JSX mein unnecessary `{}`, missing import, typo `<begin />`)
+
+**Kya seekha:**
+- `localStorage` browser mein permanently data save karta hai
+- React Router `path` ke basis pe components dikhata hai (backend routes jaisa concept)
+- `useNavigate` se programmatically page change karte hain
+- JSX ke andar sirf UI/expressions hoti hain, actions (navigate, localStorage) function ke andar honi chahiye, JSX mein nahi
+- `return` ke baad ka code kabhi execute nahi hota
